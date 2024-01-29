@@ -7,6 +7,9 @@ import {
   LatestInvoiceRaw,
   User,
   Revenue,
+  Chart,
+  ChartTable,
+  ChartForm,
 } from './definitions';
 import { formatCurrency } from './utils';
 import { unstable_noStore as noStore } from 'next/cache';
@@ -15,13 +18,13 @@ import { unstable_noStore as noStore } from 'next/cache';
 export async function fetchRevenue() {
   // Add noStore() here prevent the response from being cached.
   // This is equivalent to in fetch(..., {cache: 'no-store'}).
-  noStore();
+  //noStore();
   try {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
 
     console.log('Fetching revenue data...');
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    //await new Promise((resolve) => setTimeout(resolve, 3000));
 
     const data = await sql<Revenue>`SELECT * FROM revenue`;
 
@@ -35,7 +38,7 @@ export async function fetchRevenue() {
 }
 
 export async function fetchLatestInvoices() {
-  noStore();
+  //noStore();
   try {
     const data = await sql<LatestInvoiceRaw>`
       SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
@@ -56,7 +59,7 @@ export async function fetchLatestInvoices() {
 }
 
 export async function fetchCardData() {
-  noStore();
+  //noStore();
   try {
     // You can probably combine these into a single SQL query
     // However, we are intentionally splitting them to demonstrate
@@ -96,7 +99,7 @@ export async function fetchFilteredInvoices(
   query: string,
   currentPage: number,
 ) {
-  noStore();
+  //noStore();
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
@@ -129,7 +132,7 @@ export async function fetchFilteredInvoices(
 }
 
 export async function fetchInvoicesPages(query: string) {
-  noStore();
+  //noStore();
   try {
     const count = await sql`SELECT COUNT(*)
     FROM invoices
@@ -234,5 +237,80 @@ export async function getUser(email: string) {
   } catch (error) {
     console.error('Failed to fetch user:', error);
     throw new Error('Failed to fetch user.');
+  }
+}
+
+
+//Charts
+
+const CHARTS_PER_PAGE = 6;
+export async function fetchFilteredCharts(
+  query: string,
+  currentPage: number,
+) {
+  //noStore();
+  const offset = (currentPage - 1) * CHARTS_PER_PAGE;
+
+  try {
+    const charts = await sql<ChartTable>`
+      SELECT
+        cid,
+        id,
+        title,
+        image       
+      FROM charts      
+      WHERE
+      charts.title ILIKE ${`%${query}%`}  
+      ORDER BY id ASC
+      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+    `;
+
+    return charts.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch charts.');
+  }
+}
+
+export async function fetchChartsPages(query: string) {
+  //noStore();
+  try {
+    const count = await sql`SELECT COUNT(id)
+    FROM charts    
+    WHERE
+      charts.title ILIKE ${`%${query}%`}  
+  `;
+
+    const totalPages = Math.ceil(Number(count.rows[0].count) / CHARTS_PER_PAGE);
+    return totalPages;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch total number of charts.');
+  }
+}
+
+export async function fetchChartById(id: string) {
+  noStore();
+  try {
+    const data = await sql<ChartForm>`
+      SELECT
+      cid,
+      id,
+      title,
+      image    
+      FROM charts
+      WHERE cid = ${id};
+    `;
+    const chart = data.rows;
+    // const chart = data.rows.map((chart) => ({
+    //   ...chart,
+    //   // Convert amount from cents to dollars
+    //   amount: invoice.amount / 100,
+    // }));
+
+    return chart[0];
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch chart.');
   }
 }

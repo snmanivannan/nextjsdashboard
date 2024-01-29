@@ -1,33 +1,34 @@
 'use client';
 
-import { updateInvoice } from '@/app/lib/actions';
-import { CustomerField, InvoiceForm } from '@/app/lib/definitions';
+import { updateChart } from '@/app/lib/actions';
+import { ChartForm, CustomerField, InvoiceForm } from '@/app/lib/definitions';
 import {
-  CheckIcon,
-  ClockIcon,
-  CurrencyDollarIcon,
-  UserCircleIcon,
+
+
+  IdentificationIcon,
+  PencilSquareIcon,
+  PhotoIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
 import { useFormState } from 'react-dom';
 
-export default function EditInvoiceForm({
-  invoice,
-  customers,
+export default function EditChartForm({
+  chart
+  //customers,
 }: {
-  invoice: InvoiceForm;
-  customers: CustomerField[];
+  chart: ChartForm;
+  // customers: CustomerField[];
 }) {
   const initialState = { message: null, errors: {} };
-  const updateInvoiceWithId = updateInvoice.bind(null, invoice.id);
-  const [state, dispatch] = useFormState(updateInvoiceWithId, initialState);
+  const updateChartWithId = updateChart.bind(null, chart.cid);
+  const [state, dispatch] = useFormState(updateChartWithId, initialState);
 
   return (
     <form action={dispatch}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* Customer Name */}
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <label htmlFor="customer" className="mb-2 block text-sm font-medium">
             Choose customer
           </label>
@@ -49,40 +50,100 @@ export default function EditInvoiceForm({
             </select>
             <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
           </div>
-        </div>
+        </div> */}
 
-        {/* Invoice Amount */}
+        {/* Chart ID*/}
         <div className="mb-4">
-          <label htmlFor="amount" className="mb-2 block text-sm font-medium">
-            Choose an amount
+          <label htmlFor="id" className="mb-2 block text-sm font-medium">
+            Id
           </label>
           <div className="relative mt-2 rounded-md">
             <div className="relative">
               <input
-                id="amount"
-                name="amount"
+                id="id"
+                name="id"
                 type="number"
                 step="0.01"
-                defaultValue={invoice.amount}
-                placeholder="Enter USD amount"
+                defaultValue={chart.id}
+                placeholder="Enter a unique chart id"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 aria-describedby="amount-error"
               />
-              <CurrencyDollarIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+              <IdentificationIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
           </div>
-          <div id="amount-error" aria-live="polite" aria-atomic="true">
-            {state.errors?.amount &&
+          {/* <div id="id-error" aria-live="polite" aria-atomic="true">
+            {state.errors?. &&
               state.errors.amount.map((error: string) => (
                 <p className="mt-2 text-sm text-red-500" key={error}>
                   {error}
                 </p>
               ))}
+          </div> */}
+        </div>
+
+        {/* Chart Title */}
+        <div className="mb-4">
+          <label htmlFor="title" className="mb-2 block text-sm font-medium">
+            Title
+          </label>
+          <div className="relative mt-2 rounded-md">
+            <div className="relative">
+              <input
+                id="title"
+                name="title"
+                type="text"
+
+                defaultValue={chart.title}
+                placeholder="Enter a title for the chart "
+                className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+                aria-describedby="title-error"
+              />
+              <PencilSquareIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+            </div>
           </div>
+          {/* <div id="title-error" aria-live="polite" aria-atomic="true">
+            {state.errors?. &&
+              state.errors.title.map((error: string) => (
+                <p className="mt-2 text-sm text-red-500" key={error}>
+                  {error}
+                </p>
+              ))}
+          </div> */}
+        </div>
+
+        {/* Chart Image URL */}
+        <div className="mb-4">
+          <label htmlFor="imageurl" className="mb-2 block text-sm font-medium">
+            Image URL
+          </label>
+          <div className="relative mt-2 rounded-md">
+            <div className="relative">
+              <input
+                id="image"
+                name="image"
+                type="text"
+
+                defaultValue={chart.image}
+                placeholder="Enter a URL for the chart "
+                className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+                aria-describedby="title-error"
+              />
+              <PhotoIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+            </div>
+          </div>
+          {/* <div id="title-error" aria-live="polite" aria-atomic="true">
+            {state.errors?. &&
+              state.errors.title.map((error: string) => (
+                <p className="mt-2 text-sm text-red-500" key={error}>
+                  {error}
+                </p>
+              ))}
+          </div> */}
         </div>
 
         {/* Invoice Status */}
-        <fieldset>
+        {/* <fieldset>
           <legend className="mb-2 block text-sm font-medium">
             Set the invoice status
           </legend>
@@ -122,16 +183,16 @@ export default function EditInvoiceForm({
               </div>
             </div>
           </div>
-        </fieldset>
+        </fieldset> */}
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link
-          href="/dashboard/invoices"
+          href="/dashboard/charts"
           className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
         >
           Cancel
         </Link>
-        <Button type="submit">Edit Invoice</Button>
+        <Button type="submit">Update</Button>
       </div>
     </form>
   );

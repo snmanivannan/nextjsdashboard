@@ -26,6 +26,15 @@ export type Invoice = {
   status: 'pending' | 'paid';
 };
 
+
+export type Chart = {
+  id: number;
+  title: string;
+  image: string;
+  cid: string;
+};
+
+
 export type Revenue = {
   month: string;
   revenue: number;
@@ -54,6 +63,15 @@ export type InvoicesTable = {
   amount: number;
   status: 'pending' | 'paid';
 };
+
+
+export type ChartTable = {
+  id: number;
+  title: string;
+  image: string;
+  cid: string;
+};
+
 
 export type CustomersTableType = {
   id: string;
@@ -86,3 +104,11 @@ export type InvoiceForm = {
   amount: number;
   status: 'pending' | 'paid';
 };
+
+export type ChartForm = {
+  cid: string;
+  id: number;
+  title: string;
+  image: string;   
+};
+

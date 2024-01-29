@@ -4,6 +4,7 @@ const {
   customers,
   revenue,
   users,
+  charts,
 } = require('../app/lib/placeholder-data.js');
 const bcrypt = require('bcrypt');
 
@@ -167,6 +168,7 @@ async function main() {
   await seedCustomers(client);
   await seedInvoices(client);
   await seedRevenue(client);
+  await seedCharts(client);
 
   await client.end();
 }
@@ -177,3 +179,44 @@ main().catch((err) => {
     err,
   );
 });
+
+
+
+async function seedCharts(client) {
+  try {
+    await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+
+    // Create the "invoices" table if it doesn't exist
+    const createTable = await client.sql`
+    CREATE TABLE IF NOT EXISTS charts (
+    cid UUID DEFAULT uuid_generate_v4() PRIMARY KEY,   
+    id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    image VARCHAR(255) NOT NULL
+  );
+`;
+
+    console.log(`Created "charts" table`);
+
+    // Insert data into the "charts" table
+    const insertedCharts = await Promise.all(
+      charts.map(
+        (chart) => client.sql`
+        INSERT INTO charts (id, title, image)
+        VALUES (${chart.id}, ${chart.title}, ${chart.image})
+        ON CONFLICT (cid) DO NOTHING;
+      `,
+      ),
+    );
+
+    console.log(`Seeded ${insertedCharts.length} charts`);
+
+    return {
+      createTable,
+      charts: insertedCharts,
+    };
+  } catch (error) {
+    console.error('Error seeding invoices:', error);
+    throw error;
+  }
+}
