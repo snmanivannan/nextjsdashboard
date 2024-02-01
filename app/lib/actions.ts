@@ -22,7 +22,7 @@ const FormSchema = z.object({
 
 export type State = {
     errors?: {
-        title: any;
+        //title: any;
         customerId?: string[];
         amount?: string[];
         status?: string[];
@@ -148,12 +148,23 @@ const ChartFormSchema = z.object({
 });
 
 
+export type ChartState = {
+    errors?: {
+        id?: string[];
+        title?: string[];
+        image?: string[];
+        cid?: string[];
+    };
+    message?: string | null;
+};
+
+
 // Use Zod to update the expected types
 const UpdateChart = ChartFormSchema.omit({ cid: true });
 
 
-export async function updateChart(cid: string, prevState: State, formData: FormData) {
-    
+export async function updateChart(cid: string, prevState: ChartState, formData: FormData) {
+
     const validatedFields = UpdateChart.safeParse({
         id: formData.get('id'),
         title: formData.get('title'),
@@ -167,7 +178,7 @@ export async function updateChart(cid: string, prevState: State, formData: FormD
             message: 'Missing Fields. Failed to update Invoice.',
         };
     }
-     
+
     const { id, title, image } = validatedFields.data;
 
     try {
@@ -180,7 +191,7 @@ export async function updateChart(cid: string, prevState: State, formData: FormD
         return {
             message: 'Database Error: Failed to Update Chart.',
         };
-    } 
+    }
     console.log('completed');
     revalidatePath('/dashboard/charts');
     redirect('/dashboard/charts');
