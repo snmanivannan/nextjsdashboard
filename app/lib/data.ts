@@ -260,6 +260,7 @@ export async function fetchFilteredCharts(
         image       
       FROM charts      
       WHERE
+      status = 1 AND
       charts.title ILIKE ${`%${query}%`}  
       ORDER BY id ASC
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
@@ -278,6 +279,7 @@ export async function fetchChartsPages(query: string) {
     const count = await sql`SELECT COUNT(id)
     FROM charts    
     WHERE
+    status = 1 AND
       charts.title ILIKE ${`%${query}%`}  
   `;
 
@@ -299,7 +301,8 @@ export async function fetchChartById(id: string) {
       title,
       image    
       FROM charts
-      WHERE cid = ${id};
+      WHERE
+      cid = ${id};
     `;
     const chart = data.rows;
     // const chart = data.rows.map((chart) => ({

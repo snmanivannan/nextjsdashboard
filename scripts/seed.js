@@ -193,6 +193,7 @@ async function seedCharts(client) {
     id INT NOT NULL,
     title VARCHAR(255) NOT NULL,
     image VARCHAR(255) NOT NULL
+    status INT NOT NULL DEFAULT 1
   );
 `;
 

@@ -136,7 +136,7 @@ export async function authenticate(
     }
 }
 
-
+//Charts
 
 const ChartFormSchema = z.object({
     cid: z.string(),
@@ -202,7 +202,13 @@ export async function deleteChart(cid: string) {
     // throw new Error('Failed to Delete Invoice');
     console.log(cid);
     try {
-        await sql`DELETE FROM charts WHERE cid = ${cid}`;
+        await sql`
+        UPDATE charts
+        SET  status = 0
+        WHERE cid = ${cid}
+      `;
+
+        //await sql`DELETE FROM charts WHERE cid = ${cid}`;
         revalidatePath('/dashboard/charts');
     } catch (error) {
         return {
